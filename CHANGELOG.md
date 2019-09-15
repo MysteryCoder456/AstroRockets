@@ -2,7 +2,8 @@
 
 ## New Features
 
-None.
+1. Added Player 1 and 2.
+2. Added Controls for both.
 
 ## Changes
 
