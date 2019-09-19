@@ -2,9 +2,9 @@
 
 ## New Features
 
-1. Added Player 1 and 2.
-2. Added Controls for both.
+1. Added drift.
+2. Added boundary collisions.
 
 ## Changes
 
-None.
+1. Rockets now gradually speed up instead of abruptly moving.

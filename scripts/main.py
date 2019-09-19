@@ -1,6 +1,7 @@
 import pygame
 pygame.init()
 
+from math import sqrt, atan2
 from rocket import Rocket
 
 
@@ -25,43 +26,109 @@ class AstroRockets:
 		self.p1 = Rocket(self.width / 2 - 250, self.height / 2, (255, 0, 0))
 		self.p2 = Rocket(self.width / 2 + 250, self.height / 2, (0, 0, 255))
 		self.p2.heading = 180
+		self.p2.drift_heading = 180
 
 	def logic(self):
 		keys = pygame.key.get_pressed()
-		speed = 5
+		# speed = 5
+		acceleration = 0.3
 		turn_speed = 3
-		friction = 0.96
+		friction = 0.974
 
 		# Player 1 controls
 		if keys[pygame.K_w]:
-			self.p1.speed = speed
+			self.p1.speed += acceleration
+			self.p1.heading = self.p1.drift_heading
 		
 		self.p1.speed *= friction
 
 		if keys[pygame.K_a]:
-			self.p1.heading -= turn_speed
+			self.p1.drift_heading -= turn_speed
 
 		if keys[pygame.K_d]:
-			self.p1.heading += turn_speed
+			self.p1.drift_heading += turn_speed
 
 		# Player 2 controls
 		if keys[pygame.K_UP]:
-			self.p2.speed = speed
+			self.p2.speed += acceleration
+			self.p2.heading = self.p2.drift_heading
 		
 		self.p2.speed *= friction
 
 		if keys[pygame.K_LEFT]:
-			self.p2.heading -= turn_speed
+			self.p2.drift_heading -= turn_speed
 
 		if keys[pygame.K_RIGHT]:
-			self.p2.heading += turn_speed
+			self.p2.drift_heading += turn_speed
 
 		self.p1.update()
 		self.p2.update()
 
+		# Player 1 boundary collisions
+		if self.p1.x < 0:
+			self.p1.x = self.width
+		elif self.p1.x > self.width:
+			self.p1.x = 0
+
+		if self.p1.y < 0:
+			self.p1.y = self.height
+		elif self.p1.y > self.height:
+			self.p1.y = 0
+
+		# Player 2 boundary collisions
+		if self.p2.x < 0:
+			self.p2.x = self.width
+		elif self.p2.x > self.width:
+			self.p2.x = 0
+
+		if self.p2.y < 0:
+			self.p2.y = self.height
+		elif self.p2.y > self.height:
+			self.p2.y = 0
+
 	def render(self):
 		self.p1.render(self.win)
 		self.p2.render(self.win)
+
+	# Gameplay functions
+
+	def dist(self, x1, y1, x2, y2):
+		"""Finds the distance between 2 points on a 2D plane using the Pythagorean Theorem.
+		a^2 + b^2 = c^2
+		
+		Arguments:
+			x1 {int}
+			y1 {int}
+			x2 {int}
+			y2 {int}
+
+		Returns:
+			int -- distance between the two points
+		"""
+
+		a = x1 - x2
+		b = y1 - y2
+		c = sqrt((a ** 2) + (b ** 2))
+		return c
+
+	def collision_circle(self, x1, y1, r1, x2, y2, r2):
+		"""Finds out whether two circlea are overlapping using dist() function
+		
+		Arguments:
+			x1 {int} -- x position of first circle
+			y1 {int} -- y position of first circle
+			r1 {int} -- radius of first circle
+			x2 {int} -- x position of second circle
+			y2 {int} -- y position of second circle
+			r2 {int} -- radius of second circle
+		
+		Returns:
+			bool -- Are the 2 circle overlapping
+		"""
+		d = self.dist(x1, y1, x2, y2)
+
+		if d <= r1 + r2:
+			return True
 
 
 

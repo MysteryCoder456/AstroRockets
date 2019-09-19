@@ -8,6 +8,7 @@ class Rocket:
 		self.y = y
 		self.x_vel = 0
 		self.y_vel = 0
+		self.drift_heading = 0
 		self.heading = 0
 		self.speed = 0
 
@@ -16,6 +17,7 @@ class Rocket:
 		self.vertices = [(self.vertex_distance, 0), (self.vertex_distance, self.rear_vertex_angle), (self.vertex_distance, -self.rear_vertex_angle)] # Polar coordinates
 
 		self.color = color
+		self.collider_size = 28
 
 	def render(self, window):
 		v = self.vertices
@@ -44,4 +46,4 @@ class Rocket:
 		self.x += self.x_vel
 		self.y += self.y_vel
 
-		self.vertices = [(self.vertex_distance, self.heading), (self.vertex_distance, self.rear_vertex_angle+self.heading), (self.vertex_distance, -self.rear_vertex_angle+self.heading)]
+		self.vertices = [(self.vertex_distance, self.drift_heading), (self.vertex_distance, self.rear_vertex_angle+self.drift_heading), (self.vertex_distance, -self.rear_vertex_angle+self.drift_heading)]
