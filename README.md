@@ -15,7 +15,7 @@ To install this game follow these steps:
 
   1. Install the Python 3 Interpreter from <https://www.python.org/>.
   2. Go to Command Prompt/Terminal on your computer and enter "pip install pygame".
-  3. Then go to the folder you want to install it in using Command Prompt/Terminal, and enter `git clone https://github.com/MysteryCoder456/AstroRockets.git` or download a zip of the project.
+  3. Then go to the folder you want to install it in using Command Prompt/Terminal, and enter `git clone https://github.com/MysteryCoder456/AstroRockets.git` or download a zip of the project and extract it.
 
 **If you get any errors please tell me in the Issues tab.**
 
@@ -29,7 +29,11 @@ Open the game folder in Terminal and enter `sh start_unix.sh`.
 
 ## How to play
 
-**The controls are simple:** WASD for player 1 and arrow keys for player 2.
+**Player 1:**
+A and D for turning, W for accelerating and S for shooting.
+
+**Player 2:**
+Left and right arrow keys for turning, up arrow key for accelerating and down arrow key for shooting.
 
 ## Issues
 
