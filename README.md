@@ -29,7 +29,7 @@ Open the game folder in Terminal and enter `sh start_unix.sh`.
 
 ## How to play
 
-**The controls are simple:** WASD and L-Shift for player 1 and arrow keys and R-Shift for player 2.
+**The controls are simple:** WASD for player 1 and arrow keys for player 2.
 
 ## Issues
 
