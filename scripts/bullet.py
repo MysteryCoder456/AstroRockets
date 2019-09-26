@@ -6,14 +6,15 @@ class Bullet:
 	def __init__(self, x, y, hdg, color):
 		self.x = x
 		self.y = y
-		self.radius = 10
+		self.radius = 8
 		self.draw_x = self.x - self.radius
 		self.draw_y = self.y - self.radius
 		self.heading = hdg
-		self.speed = 7
+		self.speed = 10
 		self.x_vel = 0
 		self.y_vel = 0
 		self.color = color
+		self.despawn_timer = 0
 
 	def render(self, window):
 		pygame.draw.ellipse(window, self.color, (self.draw_x, self.draw_y, self.radius * 2, self.radius * 2))
@@ -27,3 +28,5 @@ class Bullet:
 
 		self.draw_x = self.x - self.radius
 		self.draw_y = self.y - self.radius
+
+		self.despawn_timer += 1

@@ -17,8 +17,10 @@ class Rocket:
 		self.vertices = [(self.vertex_distance, 0), (self.vertex_distance, self.rear_vertex_angle), (self.vertex_distance, -self.rear_vertex_angle)] # Polar coordinates
 
 		self.color = color
-		self.collider_size = 28
+		self.collider_size = 20
 		self.bullets = []
+		self.bullet_is_shot = False
+		self.shoot_timer = 0
 
 	def render(self, window):
 		v = self.vertices
@@ -48,3 +50,7 @@ class Rocket:
 		self.y += self.y_vel
 
 		self.vertices = [(self.vertex_distance, self.drift_heading), (self.vertex_distance, self.rear_vertex_angle+self.drift_heading), (self.vertex_distance, -self.rear_vertex_angle+self.drift_heading)]
+		self.shoot_timer += 1
+
+		if self.shoot_timer > 100:
+			self.bullet_is_shot = False

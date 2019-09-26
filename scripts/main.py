@@ -2,7 +2,9 @@ import pygame
 pygame.init()
 
 from math import sqrt, atan2
+from time import sleep
 from rocket import Rocket
+from bullet import Bullet
 
 
 class AstroRockets:
@@ -42,6 +44,13 @@ class AstroRockets:
 		
 		self.p1.speed *= friction
 
+		if keys[pygame.K_s]:
+			if not self.p1.bullet_is_shot:
+				b = Bullet(self.p1.x, self.p1.y, self.p1.drift_heading, self.p1.color)
+				self.p1.bullets.append(b)
+				self.p1.bullet_is_shot = True
+				self.p1.shoot_timer = 0
+
 		if keys[pygame.K_a]:
 			self.p1.drift_heading -= turn_speed
 
@@ -55,6 +64,13 @@ class AstroRockets:
 		
 		self.p2.speed *= friction
 
+		if keys[pygame.K_DOWN]:
+			if not self.p2.bullet_is_shot:
+				b = Bullet(self.p2.x, self.p2.y, self.p2.drift_heading, self.p2.color)
+				self.p2.bullets.append(b)
+				self.p2.bullet_is_shot = True
+				self.p2.shoot_timer = 0
+
 		if keys[pygame.K_LEFT]:
 			self.p2.drift_heading -= turn_speed
 
@@ -63,6 +79,51 @@ class AstroRockets:
 
 		self.p1.update()
 		self.p2.update()
+
+		despawn_time = 400
+
+		for bullet in self.p1.bullets:
+			bullet.update()
+
+			if bullet.x < 0:
+				bullet.x = self.width
+			elif bullet.x > self.width:
+				bullet.x = 0
+
+			if bullet.y < 0:
+				bullet.y = self.height
+			elif bullet.y > self.height:
+				bullet.y = 0
+			
+			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p2.x, self.p2.y, self.p2.collider_size):
+				print("RED WINS!!")
+				sleep(3)
+				self.running = False
+
+			if bullet.despawn_timer > despawn_time:
+				self.p1.bullets.remove(bullet)
+				
+		for bullet in self.p2.bullets:
+			bullet.update()
+
+			if bullet.x < 0:
+				bullet.x = self.width
+			elif bullet.x > self.width:
+				bullet.x = 0
+
+			if bullet.y < 0:
+				bullet.y = self.height
+			elif bullet.y > self.height:
+				bullet.y = 0
+
+			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p1.x, self.p1.y, self.p1.collider_size):
+				print("BLUE WINS!!")
+				sleep(3)
+				self.running = False
+
+			if bullet.despawn_timer > despawn_time:
+				self.p2.bullets.remove(bullet)
+
 
 		# Player 1 boundary collisions
 		if self.p1.x < 0:
@@ -89,6 +150,12 @@ class AstroRockets:
 	def render(self):
 		self.p1.render(self.win)
 		self.p2.render(self.win)
+
+		for bullet in self.p1.bullets:
+			bullet.render(self.win)
+
+		for bullet in self.p2.bullets:
+			bullet.render(self.win)
 
 	# Gameplay functions
 
@@ -129,6 +196,10 @@ class AstroRockets:
 
 		if d <= r1 + r2:
 			return True
+
+
+
+
 
 
 
