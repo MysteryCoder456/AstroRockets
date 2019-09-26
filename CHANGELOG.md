@@ -2,9 +2,8 @@
 
 ## New Features
 
-1. Added drift.
-2. Added boundary collisions.
+1. Added Bullet class.
 
 ## Changes
 
-1. Rockets now gradually speed up instead of abruptly moving.
+None

@@ -18,6 +18,7 @@ class Rocket:
 
 		self.color = color
 		self.collider_size = 28
+		self.bullets = []
 
 	def render(self, window):
 		v = self.vertices
