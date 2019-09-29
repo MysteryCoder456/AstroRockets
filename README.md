@@ -22,7 +22,7 @@ To install this game follow these steps:
 ## Running the Game
 
 **Windows**:
-Open `start_win.bat`
+Right-click the file `start_win.bat` And click Run as Administator.
 
 **MacOS and Linux**:
 Open the game folder in Terminal and enter `sh start_unix.sh`.
