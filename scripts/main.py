@@ -69,6 +69,7 @@ class AstroRockets:
 				self.p2.bullets.append(b)
 				self.p2.bullet_is_shot = True
 				self.p2.shoot_timer = 0
+				self.p2.accelerate(-5)
 
 		if keys[pygame.K_LEFT]:
 			self.p2.drift_heading -= turn_speed
