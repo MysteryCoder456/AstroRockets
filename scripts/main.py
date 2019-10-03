@@ -5,6 +5,7 @@ from math import sqrt, atan2
 from time import sleep
 from rocket import Rocket
 from bullet import Bullet
+from wall import Wall
 
 
 class AstroRockets:
@@ -29,6 +30,8 @@ class AstroRockets:
 		self.p2 = Rocket(self.width / 2 + 250, self.height / 2, (0, 0, 255))
 		self.p2.heading = 180
 		self.p2.drift_heading = 180
+
+		self.wall = Wall(100, 50, 100, 50)
 
 	def logic(self):
 		keys = pygame.key.get_pressed()
@@ -155,6 +158,8 @@ class AstroRockets:
 
 		for bullet in self.p2.bullets:
 			bullet.render(self.win)
+
+		self.wall.render(self.win)
 
 	# Gameplay functions
 

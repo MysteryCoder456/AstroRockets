@@ -2,8 +2,8 @@
 
 ## New Features
 
-1. Added bullet recoil.
+1. Added wall class
 
 ## Changes
 
-1. Increased bullet speed.
+Nothin' much...
