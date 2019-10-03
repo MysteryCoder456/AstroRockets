@@ -39,8 +39,7 @@ class AstroRockets:
 
 		# Player 1 controls
 		if keys[pygame.K_w]:
-			self.p1.speed += acceleration
-			self.p1.heading = self.p1.drift_heading
+			self.p1.accelerate(acceleration)
 		
 		self.p1.speed *= friction
 
@@ -50,6 +49,7 @@ class AstroRockets:
 				self.p1.bullets.append(b)
 				self.p1.bullet_is_shot = True
 				self.p1.shoot_timer = 0
+				self.p1.accelerate(-5)
 
 		if keys[pygame.K_a]:
 			self.p1.drift_heading -= turn_speed
@@ -59,8 +59,7 @@ class AstroRockets:
 
 		# Player 2 controls
 		if keys[pygame.K_UP]:
-			self.p2.speed += acceleration
-			self.p2.heading = self.p2.drift_heading
+			self.p2.accelerate(acceleration)
 		
 		self.p2.speed *= friction
 

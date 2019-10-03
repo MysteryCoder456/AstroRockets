@@ -8,6 +8,8 @@ class Rocket:
 		self.y = y
 		self.x_vel = 0
 		self.y_vel = 0
+		self.drift_x_vel = 1
+		self.drift_y_vel = 1
 		self.drift_heading = 0
 		self.heading = 0
 		self.speed = 0
@@ -21,6 +23,14 @@ class Rocket:
 		self.bullets = []
 		self.bullet_is_shot = False
 		self.shoot_timer = 0
+
+	def accelerate(self, speed):
+		self.speed += speed
+		self.heading = self.drift_heading
+		# self.drift_x_vel = cos(radians(self.drift_heading)) * speed
+		# self.drift_y_vel = sin(radians(self.drift_heading)) * speed
+		# self.x_vel += self.drift_x_vel
+		# self.y_vel += self.drift_y_vel
 
 	def render(self, window):
 		v = self.vertices

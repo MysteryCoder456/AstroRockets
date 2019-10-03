@@ -10,7 +10,7 @@ class Bullet:
 		self.draw_x = self.x - self.radius
 		self.draw_y = self.y - self.radius
 		self.heading = hdg
-		self.speed = 10
+		self.speed = 18
 		self.x_vel = 0
 		self.y_vel = 0
 		self.color = color
