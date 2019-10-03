@@ -14,8 +14,8 @@ Welcome to AstroRockets. It is a remade version of my favourite iPad game Astro 
 To install this game follow these steps:
 
   1. Install the Python 3 Interpreter from <https://www.python.org/>.
-  2. Go to Command Prompt/Terminal on your computer and enter "pip install pygame".
-  3. Then go to the folder you want to install it in using Command Prompt/Terminal, and enter `git clone https://github.com/MysteryCoder456/AstroRockets.git` or download a zip of the project and extract it.
+  2. Run `setup_win.bat` as Administrator if you're using Windows or run `setup_unix.sh` if you're using MacOS or linux.
+  3. Then go to the folder you want to install it in using Command Prompt/Terminal, and enter `git clone https://github.com/MysteryCoder456/AstroRockets.git` or download a zip of the repository and extract it.
 
 **If you get any errors please tell me in the Issues tab.**
 
