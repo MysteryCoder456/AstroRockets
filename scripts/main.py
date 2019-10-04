@@ -31,7 +31,9 @@ class AstroRockets:
 		self.p2.heading = 180
 		self.p2.drift_heading = 180
 
-		self.levels = [(Wall(100, 100, 300, 135), Wall(500, 500, 50, 100))]
+		self.levels = [
+			(Wall(0, 0, 1, self.height), Wall(0, 0, self.width, 1), Wall(self.width, 0, 1, self.height), Wall(0, self.height, self.width, 1), Wall(100, 100, 300, 135), Wall(500, 500, 50, 100))
+		]
 		self.current_level = 0
 
 	def logic(self):
@@ -165,15 +167,13 @@ class AstroRockets:
 			if wall.collider.colliderect(self.p1.wall_collider):
 				self.p1.x = self.p1.old_x
 				self.p1.y = self.p1.old_y
-				self.p1.x_vel = 0
-				self.p1.y_vel = 0
+				self.p1.speed = 0
 
 			# Player 2
 			if wall.collider.colliderect(self.p2.wall_collider):
 				self.p2.x = self.p2.old_x
 				self.p2.y = self.p2.old_y
-				self.p2.x_vel = 0
-				self.p2.y_vel = 0
+				self.p2.speed = 0
 
 		# Handle collisions between bullets and walls
 		for wall in self.levels[self.current_level]:

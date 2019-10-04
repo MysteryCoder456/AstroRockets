@@ -2,7 +2,7 @@
 
 ## New Features
 
-1. Added walls
+1. Added Boundary for Level 1
 
 ## Changes
 
