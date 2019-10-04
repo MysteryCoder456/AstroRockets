@@ -84,7 +84,7 @@ class AstroRockets:
 		self.p1.update()
 		self.p2.update()
 
-		despawn_time = 400
+		despawn_time = 200
 
 		for bullet in self.p1.bullets:
 			bullet.update()
