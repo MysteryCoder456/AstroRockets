@@ -6,10 +6,10 @@ class Rocket:
 	def __init__(self, x, y, color):
 		self.x = x
 		self.y = y
+		self.old_x = x
+		self.old_y = y
 		self.x_vel = 0
 		self.y_vel = 0
-		self.drift_x_vel = 1
-		self.drift_y_vel = 1
 		self.drift_heading = 0
 		self.heading = 0
 		self.speed = 0
@@ -20,9 +20,17 @@ class Rocket:
 
 		self.color = color
 		self.collider_size = 20
+		self.wall_collider = pygame.Rect(self.x - self.collider_size, self.y - self.collider_size, self.collider_size * 2, self.collider_size * 2)
 		self.bullets = []
 		self.bullet_is_shot = False
 		self.shoot_timer = 0
+
+	def update_collider(self):
+		self.wall_collider = pygame.Rect(self.x - self.collider_size, self.y - self.collider_size, self.collider_size * 2, self.collider_size * 2)
+
+	def update_old_coords(self):
+		self.old_x = self.x
+		self.old_y = self.y
 
 	def accelerate(self, speed):
 		self.speed += speed

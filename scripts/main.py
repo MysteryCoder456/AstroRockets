@@ -31,7 +31,8 @@ class AstroRockets:
 		self.p2.heading = 180
 		self.p2.drift_heading = 180
 
-		self.wall = Wall(100, 50, 100, 50)
+		self.levels = [(Wall(100, 100, 300, 135), Wall(500, 500, 50, 100))]
+		self.current_level = 0
 
 	def logic(self):
 		keys = pygame.key.get_pressed()
@@ -98,6 +99,8 @@ class AstroRockets:
 				bullet.y = self.height
 			elif bullet.y > self.height:
 				bullet.y = 0
+
+			bullet.update_collider()
 			
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p2.x, self.p2.y, self.p2.collider_size):
 				print("RED WINS!!")
@@ -119,6 +122,8 @@ class AstroRockets:
 				bullet.y = self.height
 			elif bullet.y > self.height:
 				bullet.y = 0
+
+			bullet.update_collider()
 
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p1.x, self.p1.y, self.p1.collider_size):
 				print("BLUE WINS!!")
@@ -151,6 +156,41 @@ class AstroRockets:
 		elif self.p2.y > self.height:
 			self.p2.y = 0
 
+		self.p1.update_collider()
+		self.p2.update_collider()
+
+		# Handle collisions between rockets and walls
+		for wall in self.levels[self.current_level]:
+			# Player 1
+			if wall.collider.colliderect(self.p1.wall_collider):
+				self.p1.x = self.p1.old_x
+				self.p1.y = self.p1.old_y
+				self.p1.x_vel = 0
+				self.p1.y_vel = 0
+
+			# Player 2
+			if wall.collider.colliderect(self.p2.wall_collider):
+				self.p2.x = self.p2.old_x
+				self.p2.y = self.p2.old_y
+				self.p2.x_vel = 0
+				self.p2.y_vel = 0
+
+		# Handle collisions between bullets and walls
+		for wall in self.levels[self.current_level]:
+			# Player 1
+			for bullet in self.p1.bullets:
+				print(bullet.wall_collider.colliderect(wall.collider))
+				if bullet.wall_collider.colliderect(wall.collider):
+					self.p1.bullets.remove(bullet)
+
+			# Player 2
+			for bullet in self.p2.bullets:
+				if bullet.wall_collider.colliderect(wall.collider):
+					self.p2.bullets.remove(bullet)
+
+		self.p1.update_old_coords()
+		self.p2.update_old_coords()
+
 	def render(self):
 		self.p1.render(self.win)
 		self.p2.render(self.win)
@@ -161,7 +201,8 @@ class AstroRockets:
 		for bullet in self.p2.bullets:
 			bullet.render(self.win)
 
-		self.wall.render(self.win)
+		for wall in self.levels[self.current_level]:
+			wall.render(self.win)
 
 	# Gameplay functions
 

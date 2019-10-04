@@ -2,7 +2,7 @@
 
 ## New Features
 
-1. Added wall class
+1. Added walls
 
 ## Changes
 

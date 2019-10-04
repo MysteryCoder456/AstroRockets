@@ -15,6 +15,10 @@ class Bullet:
 		self.y_vel = 0
 		self.color = color
 		self.despawn_timer = 0
+		self.wall_collider = pygame.Rect(self.draw_x, self.draw_y, self.radius * 2, self.radius * 2)
+
+	def update_collider(self):
+		self.wall_collider = pygame.Rect(self.draw_x, self.draw_y, self.radius * 2, self.radius * 2)
 
 	def render(self, window):
 		pygame.draw.ellipse(window, self.color, (self.draw_x, self.draw_y, self.radius * 2, self.radius * 2))
