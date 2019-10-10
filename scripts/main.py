@@ -2,9 +2,11 @@ import pygame
 pygame.init()
 
 from math import sqrt, atan2
+from random import randint
 from time import sleep
 from rocket import Rocket
 from bullet import Bullet
+from wall import Wall
 
 
 class AstroRockets:
@@ -29,6 +31,13 @@ class AstroRockets:
 		self.p2 = Rocket(self.width / 2 + 250, self.height / 2, (0, 0, 255))
 		self.p2.heading = 180
 		self.p2.drift_heading = 180
+
+		self.levels = [
+			(Wall(5, 5, 1, self.height), Wall(5, 5, self.width, 1), Wall(self.width - 5, 5, 1, self.height), Wall(5, self.height - 5, self.width, 1), Wall(100, 100, 300, 135), Wall(900, 450, 150, 250)),
+			(Wall(5, 5, 1, self.height/2 - 150), Wall(5, self.height/2 + 150, 1, self.height/2 - 150), Wall(5, 5, self.width, 1), Wall(self.width - 5, 5, 1, self.height / 2 - 150), Wall(self.width - 5, self.height / 2 + 150, 1, self.height / 2 - 150), Wall(5, self.height - 5, self.width, 1))
+		]
+
+		self.current_level = randint(0 ,len(self.levels)-1)
 
 	def logic(self):
 		keys = pygame.key.get_pressed()
@@ -95,6 +104,8 @@ class AstroRockets:
 				bullet.y = self.height
 			elif bullet.y > self.height:
 				bullet.y = 0
+
+			bullet.update_collider()
 			
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p2.x, self.p2.y, self.p2.collider_size):
 				print("RED WINS!!")
@@ -116,6 +127,8 @@ class AstroRockets:
 				bullet.y = self.height
 			elif bullet.y > self.height:
 				bullet.y = 0
+
+			bullet.update_collider()
 
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p1.x, self.p1.y, self.p1.collider_size):
 				print("BLUE WINS!!")
@@ -148,6 +161,38 @@ class AstroRockets:
 		elif self.p2.y > self.height:
 			self.p2.y = 0
 
+		self.p1.update_collider()
+		self.p2.update_collider()
+
+		# Handle collisions between rockets and walls
+		for wall in self.levels[self.current_level]:
+			# Player 1
+			if wall.collider.colliderect(self.p1.wall_collider):
+				self.p1.x = self.p1.old_x
+				self.p1.y = self.p1.old_y
+				self.p1.speed = 0
+
+			# Player 2
+			if wall.collider.colliderect(self.p2.wall_collider):
+				self.p2.x = self.p2.old_x
+				self.p2.y = self.p2.old_y
+				self.p2.speed = 0
+
+		# Handle collisions between bullets and walls
+		for wall in self.levels[self.current_level]:
+			# Player 1
+			for bullet in self.p1.bullets:
+				if bullet.wall_collider.colliderect(wall.collider):
+					self.p1.bullets.remove(bullet)
+
+			# Player 2
+			for bullet in self.p2.bullets:
+				if bullet.wall_collider.colliderect(wall.collider):
+					self.p2.bullets.remove(bullet)
+
+		self.p1.update_old_coords()
+		self.p2.update_old_coords()
+
 	def render(self):
 		self.p1.render(self.win)
 		self.p2.render(self.win)
@@ -157,6 +202,9 @@ class AstroRockets:
 
 		for bullet in self.p2.bullets:
 			bullet.render(self.win)
+
+		for wall in self.levels[self.current_level]:
+			wall.render(self.win)
 
 	# Gameplay functions
 
@@ -233,8 +281,6 @@ class AstroRockets:
 
 
 def main():
-	game = AstroRockets((1280, 720), "AstroRockets", (0, 0, 0))
-
 	game.start()
 
 	while game.running:
@@ -242,7 +288,7 @@ def main():
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				game.running = False
+				quit()
 
 		game.logic()
 		game.win.fill(game.background)
@@ -251,5 +297,7 @@ def main():
 
 
 if __name__ == "__main__":
-	main()
-	quit()
+	game = AstroRockets((1280, 720), "AstroRockets", (0, 0, 0))
+	while True:
+		main()
+		game.running = True
