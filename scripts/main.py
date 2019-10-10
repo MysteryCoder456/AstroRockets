@@ -2,6 +2,7 @@ import pygame
 pygame.init()
 
 from math import sqrt, atan2
+from random import randint
 from time import sleep
 from rocket import Rocket
 from bullet import Bullet
@@ -32,9 +33,11 @@ class AstroRockets:
 		self.p2.drift_heading = 180
 
 		self.levels = [
-			(Wall(0, 0, 1, self.height), Wall(0, 0, self.width, 1), Wall(self.width, 0, 1, self.height), Wall(0, self.height, self.width, 1), Wall(100, 100, 300, 135), Wall(500, 500, 50, 100))
+			(Wall(5, 5, 1, self.height), Wall(5, 5, self.width, 1), Wall(self.width - 5, 5, 1, self.height), Wall(5, self.height - 5, self.width, 1), Wall(100, 100, 300, 135), Wall(900, 450, 150, 250)),
+			(Wall(5, 5, 1, self.height/2 - 150), Wall(5, self.height/2 + 150, 1, self.height/2 - 150), Wall(5, 5, self.width, 1), Wall(self.width - 5, 5, 1, self.height / 2 - 150), Wall(self.width - 5, self.height / 2 + 150, 1, self.height / 2 - 150), Wall(5, self.height - 5, self.width, 1))
 		]
-		self.current_level = 0
+
+		self.current_level = randint(0 ,len(self.levels)-1)
 
 	def logic(self):
 		keys = pygame.key.get_pressed()
@@ -179,7 +182,6 @@ class AstroRockets:
 		for wall in self.levels[self.current_level]:
 			# Player 1
 			for bullet in self.p1.bullets:
-				print(bullet.wall_collider.colliderect(wall.collider))
 				if bullet.wall_collider.colliderect(wall.collider):
 					self.p1.bullets.remove(bullet)
 
@@ -279,8 +281,6 @@ class AstroRockets:
 
 
 def main():
-	game = AstroRockets((1280, 720), "AstroRockets", (0, 0, 0))
-
 	game.start()
 
 	while game.running:
@@ -288,7 +288,7 @@ def main():
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				game.running = False
+				quit()
 
 		game.logic()
 		game.win.fill(game.background)
@@ -297,5 +297,7 @@ def main():
 
 
 if __name__ == "__main__":
-	main()
-	quit()
+	game = AstroRockets((1280, 720), "AstroRockets", (0, 0, 0))
+	while True:
+		main()
+		game.running = True
