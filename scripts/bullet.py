@@ -1,3 +1,9 @@
+"""
+Produced by Rehatbir Singh(MysteryCoder456)
+Contact at rehatbir.singh@gmail.com for any questions
+Full Rights Reserved under MIT License
+"""
+
 import pygame
 from math import radians, cos, sin
 
