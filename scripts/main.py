@@ -13,6 +13,7 @@ from time import sleep
 from rocket import Rocket
 from bullet import Bullet
 from wall import Wall
+from powerups import ScatterShot
 
 
 class AstroRockets:
@@ -45,12 +46,20 @@ class AstroRockets:
 
 		self.current_level = randint(0 ,len(self.levels)-1)
 
+		self.powerup_ids = {
+			0 : "none",
+			1 : "scatter_shot",
+			2 : "missile"
+		}
+
+		self.powerups = [ScatterShot(self.width / 2, self.height / 2)]
+
 	def logic(self):
 		keys = pygame.key.get_pressed()
 		# speed = 5
-		acceleration = 0.3
+		acceleration = 0.25
 		turn_speed = 3
-		friction = 0.974
+		friction = 0.978
 		recoil = -5
 
 		# Player 1 controls
@@ -196,6 +205,18 @@ class AstroRockets:
 				if bullet.wall_collider.colliderect(wall.collider):
 					self.p2.bullets.remove(bullet)
 
+		# Handle collisions between rockets and powerups
+		for powerup in self.powerups:
+			# Player 1
+			if self.collision_circle(self.p1.x, self.p1.y, self.p1.collider_size, powerup.x, powerup.y, powerup.radius):
+				self.p1.assign_powerup(powerup.id)
+				self.powerups.remove(powerup)
+
+			# Player 2
+			if self.collision_circle(self.p2.x, self.p2.y, self.p2.collider_size, powerup.x, powerup.y, powerup.radius):
+				self.p2.assign_powerup(powerup.id)
+				self.powerups.remove(powerup)
+
 		self.p1.update_old_coords()
 		self.p2.update_old_coords()
 
@@ -211,6 +232,9 @@ class AstroRockets:
 
 		for wall in self.levels[self.current_level]:
 			wall.render(self.win)
+
+		for powerup in self.powerups:
+			powerup.render(self.win)
 
 	# Gameplay functions
 

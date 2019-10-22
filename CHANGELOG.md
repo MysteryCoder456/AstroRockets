@@ -2,9 +2,8 @@
 
 ## New Features
 
-1. Added new level.
-2. New level will be selected after a player kills another player.
+1. Added Scatter Shot PowerUp. However, the PowerUps do not function at the moment.
 
 ## Changes
 
-1. Increased bullet speed (again).
+1. Tweaked rocket movement.
