@@ -2,8 +2,8 @@
 
 ## New Features
 
-1. Added Scatter Shot PowerUp. However, the PowerUps do not function at the moment.
+1. Added functionality to Scatter Shot PowerUp.
 
 ## Changes
 
-1. Tweaked rocket movement.
+1. Reduce bullet speed in order to prevent glitches.

@@ -46,11 +46,11 @@ class AstroRockets:
 
 		self.current_level = randint(0 ,len(self.levels)-1)
 
-		self.powerup_ids = {
-			0 : "none",
-			1 : "scatter_shot",
-			2 : "missile"
-		}
+		self.powerup_ids = [
+			"none", # 0
+			"scatter_shot", # 1
+			"missile" # 2
+		]
 
 		self.powerups = [ScatterShot(self.width / 2, self.height / 2)]
 
@@ -82,11 +82,26 @@ class AstroRockets:
 		if keys[pygame.K_d]:
 			self.p1.drift_heading += turn_speed
 
+		# PowerUp Shooting for Player 1
+		if keys[pygame.K_e] or keys[pygame.K_q]:
+
+			if self.powerup_ids[self.p1.current_powerup] == "none":
+				print("No Powerup Collected!")
+
+			elif self.powerup_ids[self.p1.current_powerup] == "scatter_shot":
+				bullet_count = 8
+				for i in range(bullet_count):
+					bullet_hdg = (360 / bullet_count) * i
+					b = Bullet(self.p1.x, self.p1.y, bullet_hdg, ScatterShot(0, 0).color)
+					b.speed = 8
+					self.p1.bullets.append(b)
+
+			self.p1.assign_powerup(0)
+
+
 		# Player 2 controls
 		if keys[pygame.K_UP]:
 			self.p2.accelerate(acceleration)
-		
-		self.p2.speed *= friction
 
 		if keys[pygame.K_DOWN]:
 			if not self.p2.bullet_is_shot:
@@ -102,11 +117,31 @@ class AstroRockets:
 		if keys[pygame.K_RIGHT]:
 			self.p2.drift_heading += turn_speed
 
+		# PowerUp Shooting for Player 2
+		if keys[pygame.K_RSHIFT] or keys[pygame.K_QUESTION]:
+			
+			if self.powerup_ids[self.p2.current_powerup] == "none":
+				print("No Powerup Collected!")
+
+			elif self.powerup_ids[self.p2.current_powerup] == "scatter_shot":
+				bullet_count = 8
+				for i in range(bullet_count):
+					bullet_hdg = (360 / bullet_count) * i
+					b = Bullet(self.p2.x, self.p2.y, bullet_hdg, ScatterShot(0, 0).color)
+					b.speed = 8
+					self.p2.bullets.append(b)
+			
+			self.p2.assign_powerup(0)
+
 		self.p1.update()
+		self.p1.speed *= friction
+		
 		self.p2.update()
+		self.p2.speed *= friction
 
 		despawn_time = 200
 
+		# Update Player 1's Bullets
 		for bullet in self.p1.bullets:
 			bullet.update()
 
@@ -122,14 +157,17 @@ class AstroRockets:
 
 			bullet.update_collider()
 			
+			# Collision between player 2 and player 1's bullets
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p2.x, self.p2.y, self.p2.collider_size):
 				print("RED WINS!!")
 				sleep(3)
 				self.running = False
 
+			# Automatic despawn
 			if bullet.despawn_timer > despawn_time:
 				self.p1.bullets.remove(bullet)
 				
+		# Update Player 2's Bullets		
 		for bullet in self.p2.bullets:
 			bullet.update()
 
@@ -145,11 +183,13 @@ class AstroRockets:
 
 			bullet.update_collider()
 
+			# Collisions between player 1 and player 2's bullets
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p1.x, self.p1.y, self.p1.collider_size):
 				print("BLUE WINS!!")
 				sleep(3)
 				self.running = False
 
+			# Automatic despawn
 			if bullet.despawn_timer > despawn_time:
 				self.p2.bullets.remove(bullet)
 
