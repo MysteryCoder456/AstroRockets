@@ -29,9 +29,9 @@ class AstroRockets:
 		self.win = pygame.display.set_mode(size)
 		pygame.display.set_caption(title)
 
-	# ###################### #
-	# ### Ignore this 🔼 ### #
-	# ###################### #
+	# ##################### #
+	# #### Ignore this #### #
+	# ##################### #
 
 	def start(self):
 		self.p1 = Rocket(self.width / 2 - 250, self.height / 2, (255, 0, 0))
