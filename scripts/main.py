@@ -52,15 +52,27 @@ class AstroRockets:
 			"missile" # 2
 		]
 
-		self.powerups = [ScatterShot(self.width / 2, self.height / 2)]
+		self.powerups = []
 
 	def logic(self):
+		# Randomly spawn powerups
+		if randint(0, 10000) < 40: # 0.4 percent chance of a powerup spawning randomly
+			powerup_id = self.powerup_ids[randint(1, len(self.powerup_ids)-1)]
+
+			if powerup_id == "scatter_shot":
+				pos = self.get_spawn_location()
+				powerup = ScatterShot(pos[0], pos[1])
+				self.powerups.append(powerup)
+
 		keys = pygame.key.get_pressed()
 		# speed = 5
 		acceleration = 0.25
 		turn_speed = 3
 		friction = 0.978
 		recoil = -5
+		despawn_time = 300
+		scattershot_count = 16
+		scattershot_speed = 12
 
 		# Player 1 controls
 		if keys[pygame.K_w]:
@@ -83,17 +95,16 @@ class AstroRockets:
 			self.p1.drift_heading += turn_speed
 
 		# PowerUp Shooting for Player 1
-		if keys[pygame.K_e] or keys[pygame.K_q]:
+		if keys[pygame.K_e]:
 
 			if self.powerup_ids[self.p1.current_powerup] == "none":
 				print("No Powerup Collected!")
 
 			elif self.powerup_ids[self.p1.current_powerup] == "scatter_shot":
-				bullet_count = 8
-				for i in range(bullet_count):
-					bullet_hdg = (360 / bullet_count) * i
+				for i in range(scattershot_count):
+					bullet_hdg = ((360 / scattershot_count) * i) + self.p1.drift_heading
 					b = Bullet(self.p1.x, self.p1.y, bullet_hdg, ScatterShot(0, 0).color)
-					b.speed = 8
+					b.speed = scattershot_speed
 					self.p1.bullets.append(b)
 
 			self.p1.assign_powerup(0)
@@ -124,11 +135,10 @@ class AstroRockets:
 				print("No Powerup Collected!")
 
 			elif self.powerup_ids[self.p2.current_powerup] == "scatter_shot":
-				bullet_count = 8
-				for i in range(bullet_count):
-					bullet_hdg = (360 / bullet_count) * i
+				for i in range(scattershot_count):
+					bullet_hdg = ((360 / scattershot_count) * i) + self.p2.drift_heading
 					b = Bullet(self.p2.x, self.p2.y, bullet_hdg, ScatterShot(0, 0).color)
-					b.speed = 8
+					b.speed = scattershot_speed
 					self.p2.bullets.append(b)
 			
 			self.p2.assign_powerup(0)
@@ -138,8 +148,6 @@ class AstroRockets:
 		
 		self.p2.update()
 		self.p2.speed *= friction
-
-		despawn_time = 200
 
 		# Update Player 1's Bullets
 		for bullet in self.p1.bullets:
@@ -277,6 +285,24 @@ class AstroRockets:
 			powerup.render(self.win)
 
 	# Gameplay functions
+
+	def get_spawn_location(self):
+		"""Finds a suitable random spawn location for a powerup, staying within the
+		boundaries and avoiding all walls.
+		
+		Returns:
+			tuple -- Contains the x and y coordinates for the suitable location
+		"""
+
+		x = randint(5, self.width - 5)
+		y = randint(5, self.height - 5)
+		size = ScatterShot(0, 0).radius
+		rect = pygame.Rect(x - size, y - size, size * 2, size * 2)
+		for wall in self.levels[self.current_level]:
+			if wall.collider.colliderect(rect):
+				self.get_spawn_location()
+
+		return (x, y)
 
 	def dist(self, x1, y1, x2, y2):
 		"""Finds the distance between 2 points on a 2D plane using the Pythagorean Theorem.
