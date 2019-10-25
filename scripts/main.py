@@ -77,8 +77,6 @@ class AstroRockets:
 		# Player 1 controls
 		if keys[pygame.K_w]:
 			self.p1.accelerate(acceleration)
-		
-		self.p1.speed *= friction
 
 		if keys[pygame.K_s]:
 			if not self.p1.bullet_is_shot:
