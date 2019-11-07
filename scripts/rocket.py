@@ -33,6 +33,11 @@ class Rocket:
 		self.shoot_timer = 0
 		
 		self.current_powerup = 0
+		self.missile_exploded = False
+		self.missile_explosion_radius = 150
+		self.missile_timer = 0
+		self.missile_explosion_x = 0
+		self.missile_explosion_y = 0
 
 	def assign_powerup(self, powerup=0):
 		self.current_powerup = powerup

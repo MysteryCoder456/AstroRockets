@@ -13,7 +13,7 @@ from time import sleep
 from rocket import Rocket
 from bullet import Bullet
 from wall import Wall
-from powerups import ScatterShot
+from powerups import PowerUp, ScatterShot, Missile
 
 
 class AstroRockets:
@@ -47,9 +47,9 @@ class AstroRockets:
 		self.current_level = randint(0 ,len(self.levels)-1)
 
 		self.powerup_ids = [
-			"none", # 0
-			"scatter_shot", # 1
-			"missile" # 2
+			"none", # id = 0
+			"scatter_shot", # id = 1
+			"missile" # id = 2
 		]
 
 		self.powerups = []
@@ -63,6 +63,11 @@ class AstroRockets:
 				pos = self.get_spawn_location()
 				powerup = ScatterShot(pos[0], pos[1])
 				self.powerups.append(powerup)
+			
+			if powerup_id == "missile":
+				pos = self.get_spawn_location()
+				powerup = Missile(pos[0], pos[1])
+				self.powerups.append(powerup)
 
 		keys = pygame.key.get_pressed()
 		# speed = 5
@@ -71,8 +76,12 @@ class AstroRockets:
 		friction = 0.978
 		recoil = -5
 		despawn_time = 300
+
 		scattershot_count = 16
 		scattershot_speed = 12
+
+		missile_speed = 10
+		missile_fade = 80
 
 		# Player 1 controls
 		if keys[pygame.K_w]:
@@ -104,6 +113,11 @@ class AstroRockets:
 					b = Bullet(self.p1.x, self.p1.y, bullet_hdg, ScatterShot(0, 0).color)
 					b.speed = scattershot_speed
 					self.p1.bullets.append(b)
+			
+			elif self.powerup_ids[self.p1.current_powerup] == "missile":
+				m = Bullet(self.p1.x, self.p1.y, self.p1.drift_heading, Missile(0, 0).color)
+				m.speed = missile_speed
+				self.p1.bullets.append(m)
 
 			self.p1.assign_powerup(0)
 
@@ -139,6 +153,11 @@ class AstroRockets:
 					b.speed = scattershot_speed
 					self.p2.bullets.append(b)
 			
+			elif self.powerup_ids[self.p2.current_powerup] == "missile":
+				m = Bullet(self.p2.x, self.p2.y, self.p2.drift_heading, Missile(0, 0).color)
+				m.speed = missile_speed
+				self.p2.bullets.append(m)
+			
 			self.p2.assign_powerup(0)
 
 		self.p1.update()
@@ -165,9 +184,10 @@ class AstroRockets:
 			
 			# Collision between player 2 and player 1's bullets
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p2.x, self.p2.y, self.p2.collider_size):
-				print("RED WINS!!")
-				sleep(3)
-				self.running = False
+				if bullet.color != Missile(0, 0).color:
+					print("RED WINS!!")
+					sleep(3)
+					self.running = False
 
 			# Automatic despawn
 			if bullet.despawn_timer > despawn_time:
@@ -191,9 +211,10 @@ class AstroRockets:
 
 			# Collisions between player 1 and player 2's bullets
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p1.x, self.p1.y, self.p1.collider_size):
-				print("BLUE WINS!!")
-				sleep(3)
-				self.running = False
+				if bullet.color != Missile(0, 0).color:
+					print("BLUE WINS!!")
+					sleep(3)
+					self.running = False
 
 			# Automatic despawn
 			if bullet.despawn_timer > despawn_time:
@@ -244,11 +265,35 @@ class AstroRockets:
 			# Player 1
 			for bullet in self.p1.bullets:
 				if bullet.wall_collider.colliderect(wall.collider):
+					if bullet.color == Missile(0, 0).color:
+						self.p1.missile_exploded = True
+						self.p1.missile_explosion_x = bullet.x
+						self.p1.missile_explosion_y = bullet.y
+						if self.dist(bullet.x, bullet.y, self.p1.x, self.p1.y) <= self.p1.collider_size + self.p1.missile_explosion_radius:
+							print("BLUE WINS")
+							# self.running = False
+						
+						if self.dist(bullet.x, bullet.y, self.p2.x, self.p2.y) <= self.p2.collider_size + self.p2.missile_explosion_radius:
+							print("RED WINS")
+							# self.running = False
+					
 					self.p1.bullets.remove(bullet)
 
 			# Player 2
 			for bullet in self.p2.bullets:
 				if bullet.wall_collider.colliderect(wall.collider):
+					if bullet.color == Missile(0, 0).color:
+						self.p2.missile_exploded = True
+						self.p2.missile_explosion_x = bullet.x
+						self.p2.missile_explosion_y = bullet.y
+						if self.dist(bullet.x, bullet.y, self.p1.x, self.p1.y) <= self.p1.collider_size + self.p1.missile_explosion_radius:
+							print("BLUE WINS")
+							# self.running = False
+						
+						if self.dist(bullet.x, bullet.y, self.p2.x, self.p2.y) <= self.p2.collider_size + self.p2.missile_explosion_radius:
+							print("RED WINS")
+							# self.running = False
+					
 					self.p2.bullets.remove(bullet)
 
 		# Handle collisions between rockets and powerups
@@ -266,6 +311,22 @@ class AstroRockets:
 		self.p1.update_old_coords()
 		self.p2.update_old_coords()
 
+		# Missile Explosion Fade Player 1
+		if self.p1.missile_exploded:
+			self.p1.missile_timer += 1
+
+		if self.p1.missile_timer > missile_fade:
+			self.p1.missile_exploded = False
+			self.running = False
+
+		# Missile Explosion Fade Player 2
+		if self.p2.missile_exploded:
+			self.p2.missile_timer += 1
+
+		if self.p2.missile_timer > missile_fade:
+			self.p2.missile_exploded = False
+			self.running = False
+
 	def render(self):
 		self.p1.render(self.win)
 		self.p2.render(self.win)
@@ -281,6 +342,26 @@ class AstroRockets:
 
 		for powerup in self.powerups:
 			powerup.render(self.win)
+
+		if self.p1.missile_exploded:
+			pygame.draw.ellipse(self.win, (255, 255, 255), (self.p1.missile_explosion_x - self.p1.missile_explosion_radius,
+															self.p1.missile_explosion_y - self.p1.missile_explosion_radius,
+															self.p1.missile_explosion_radius * 2,
+															self.p1.missile_explosion_radius * 2
+															))
+		
+		if self.p2.missile_exploded:
+			pygame.draw.ellipse(self.win, (255, 255, 255), (self.p2.missile_explosion_x - self.p2.missile_explosion_radius,
+															self.p2.missile_explosion_y - self.p2.missile_explosion_radius,
+															self.p2.missile_explosion_radius * 2,
+															self.p2.missile_explosion_radius * 2
+															))
+
+		pygame.display.update()
+
+		# if self.p1.missile_exploded or self.p2.missile_exploded:
+		# 	if not self.running:
+		# 		sleep(3)
 
 	# Gameplay functions
 
@@ -387,7 +468,6 @@ def main():
 		game.logic()
 		game.win.fill(game.background)
 		game.render()
-		pygame.display.update()
 
 
 if __name__ == "__main__":
