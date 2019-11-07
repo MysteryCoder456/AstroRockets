@@ -1,6 +1,6 @@
 # AstroRockets
 
-Welcome to AstroRockets. It is a remade version of my favourite iPad game Astro Duel. I am still not very good at coding so please do not hate on me if I make some rookie mistakes.
+Welcome to AstroRockets. It is a remade version of my favourite iPad game Astro Duel. I am still not very good at coding so please do not hate on me if I make some rookie mistakes. If you want to try out the PowerUps update go to the powerups branch.
 
 ## System Requirements
 
