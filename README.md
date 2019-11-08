@@ -1,11 +1,11 @@
 # AstroRockets
 
-Welcome to AstroRockets. It is a remade version of my favourite iPad game Astro Duel. I am still not very good at coding so please do not hate on me if I make some rookie mistakes.
+Welcome to AstroRockets. It is a remade version of my favourite iPad game Astro Duel. I am still not very good at coding so please do not hate on me if I make some rookie mistakes. If you want to try out the pre-release versions, go to the releases tab and then search for versions with "a" suffix.
 
 ## System Requirements
 
   1. Processors: Intel Atom® processor or Intel® Core™ i3 processor.
-  2. Disk Space: 2 GB or more.
+  2. Disk Space: 1 GB or more.
   3. Operating systems: Windows 7 or later, macOS, and Linux.
   4. Display Size: at least 720p.
 
@@ -14,8 +14,8 @@ Welcome to AstroRockets. It is a remade version of my favourite iPad game Astro 
 To install this game follow these steps:
 
   1. Install the Python 3 Interpreter from <https://www.python.org/>.
-  2. Run `setup_win.bat` as Administrator if you're using Windows or run `setup_unix.sh` if you're using MacOS or linux.
-  3. Then go to the folder you want to install it in using Command Prompt/Terminal, and enter `git clone https://github.com/MysteryCoder456/AstroRockets.git` or download a zip of the repository and extract it.
+  2. Then go to the folder you want to install it in using Command Prompt/Terminal, and enter `git clone https://github.com/MysteryCoder456/AstroRockets.git` or download a zip of the repository and extract it.
+  3. Run `setup_win.bat` as Administrator if you're using Windows or run `setup_unix.sh` if you're using MacOS or linux.
 
 **If you get any errors please tell me in the Issues tab.**
 
