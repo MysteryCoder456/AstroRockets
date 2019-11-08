@@ -25,7 +25,7 @@ To install this game follow these steps:
 Right-click the file `start_win.bat` And click Run as Administator.
 
 **MacOS and Linux**:
-Open the game folder in Terminal and enter `sh start_unix.sh`.
+Open the game folder in Terminal and enter `./start_unix.sh`.
 
 ## How to play
 
