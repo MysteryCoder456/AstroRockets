@@ -18,6 +18,7 @@ class PowerUp:
 		self.color = (255, 255, 255)
 		self.draw_x = self.x - self.radius
 		self.draw_y = self.y - self.radius
+		self.wall_collider = pygame.Rect(self.draw_x, self.draw_y, self.radius * 2, self.radius * 2)
 
 	def render(self, window):
 		pygame.draw.ellipse(window, self.color, (self.draw_x, self.draw_y, self.radius * 2, self.radius * 2))
@@ -28,14 +29,18 @@ class PowerUp:
 class ScatterShot(PowerUp):
 	def __init__(self, x, y):
 		super().__init__(x, y)
+
 		self.id = 1
+
 		self.color = (30, 230, 209)
 
 
 class Missile(PowerUp):
 	def __init__(self, x, y):
 		super().__init__(x, y)
+
 		self.id = 2
+
 		self.color = (149, 0, 2)
 		self.inner_color = (251, 251, 251)
 		self.inner_radius = self.radius / 2

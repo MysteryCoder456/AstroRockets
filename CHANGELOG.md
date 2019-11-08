@@ -2,9 +2,11 @@
 
 ## New Features
 
-1. Added Missile PowerUp.
-2. When you shoot a missile, a small red bullet will be shot out. When this bullet hits a wall, it will explode and destroy all rockets within a fixed radius from it regardless of the owner of the missile.
+None...
 
 ## Changes
 
-None...
+1. Increased explosion radius of Missiles.
+2. Missiles will no longer naturally despawn.
+3. Powerups will now have a chance of spawning at fixed intervals in the game, intead of spawning at random times. This will prevent overcrowding of the powerups.
+4. Fixed Bug where powerups would overlap with walls.
