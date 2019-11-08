@@ -1,3 +1,3 @@
 echo "installing dependencies..."
 pip install pygame
-sh start_unix.sh
+sh ./start_unix.sh

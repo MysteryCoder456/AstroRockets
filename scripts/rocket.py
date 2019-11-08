@@ -27,9 +27,20 @@ class Rocket:
 		self.color = color
 		self.collider_size = 20
 		self.wall_collider = pygame.Rect(self.x - self.collider_size, self.y - self.collider_size, self.collider_size * 2, self.collider_size * 2)
+		
 		self.bullets = []
 		self.bullet_is_shot = False
 		self.shoot_timer = 0
+		
+		self.current_powerup = 0
+		self.missile_exploded = False
+		self.missile_explosion_radius = 250
+		self.missile_timer = 0
+		self.missile_explosion_x = 0
+		self.missile_explosion_y = 0
+
+	def assign_powerup(self, powerup=0):
+		self.current_powerup = powerup
 
 	def update_collider(self):
 		self.wall_collider = pygame.Rect(self.x - self.collider_size, self.y - self.collider_size, self.collider_size * 2, self.collider_size * 2)

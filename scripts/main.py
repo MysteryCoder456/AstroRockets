@@ -13,6 +13,7 @@ from time import sleep
 from rocket import Rocket
 from bullet import Bullet
 from wall import Wall
+from powerups import PowerUp, ScatterShot, Missile
 
 
 class AstroRockets:
@@ -24,13 +25,14 @@ class AstroRockets:
 		self.clock = pygame.time.Clock()
 		self.FPS = 60
 		self.running = True
+		self.game_over = False
 
 		self.win = pygame.display.set_mode(size)
 		pygame.display.set_caption(title)
 
-	# ###################### #
-	# ### Ignore this 🔼 ### #
-	# ###################### #
+	# ##################### #
+	# #### Ignore this #### #
+	# ##################### #
 
 	def start(self):
 		self.p1 = Rocket(self.width / 2 - 250, self.height / 2, (255, 0, 0))
@@ -45,19 +47,48 @@ class AstroRockets:
 
 		self.current_level = randint(0 ,len(self.levels)-1)
 
+		self.powerup_ids = [
+			"none", # id = 0
+			"scatter_shot", # id = 1
+			"missile" # id = 2
+		]
+
+		self.powerups = []
+		self.powerup_spawn_timer = 0
+
 	def logic(self):
+		# Randomly spawn powerups
+		if self.powerup_spawn_timer % 600 == 0:
+			if randint(0, 100) <= 50: # 50% chance of a powerups spawning
+				powerup_id = self.powerup_ids[randint(1, len(self.powerup_ids)-1)]
+				x = randint(5, self.width - 5)
+				y = randint(5, self.height - 5)
+
+				if powerup_id == "scatter_shot":
+					powerup = ScatterShot(x, y)
+					self.powerups.append(powerup)
+				
+				if powerup_id == "missile":
+					powerup = Missile(x, y)
+					self.powerups.append(powerup)
+
 		keys = pygame.key.get_pressed()
 		# speed = 5
-		acceleration = 0.3
+		acceleration = 0.25
 		turn_speed = 3
-		friction = 0.974
+		friction = 0.978
 		recoil = -5
+		despawn_time = 300
+
+		scattershot_count = 16
+		scattershot_speed = 12
+
+		missile_speed = 10
+		missile_fade = 150
 
 		# Player 1 controls
 		if keys[pygame.K_w]:
 			self.p1.accelerate(acceleration)
-		
-		self.p1.speed *= friction
 
 		if keys[pygame.K_s]:
 			if not self.p1.bullet_is_shot:
@@ -73,11 +104,31 @@ class AstroRockets:
 		if keys[pygame.K_d]:
 			self.p1.drift_heading += turn_speed
 
+		# PowerUp Shooting for Player 1
+		if keys[pygame.K_e]:
+
+			if self.powerup_ids[self.p1.current_powerup] == "none":
+				print("No Powerup Collected!")
+
+			elif self.powerup_ids[self.p1.current_powerup] == "scatter_shot":
+				for i in range(scattershot_count):
+					bullet_hdg = ((360 / scattershot_count) * i) + self.p1.drift_heading
+					b = Bullet(self.p1.x, self.p1.y, bullet_hdg, ScatterShot(0, 0).color)
+					b.speed = scattershot_speed
+					self.p1.bullets.append(b)
+			
+			elif self.powerup_ids[self.p1.current_powerup] == "missile":
+				m = Bullet(self.p1.x, self.p1.y, self.p1.drift_heading, Missile(0, 0).color)
+				m.speed = missile_speed
+				self.p1.bullets.append(m)
+				self.p1.accelerate(recoil)
+
+			self.p1.assign_powerup(0)
+
+
 		# Player 2 controls
 		if keys[pygame.K_UP]:
 			self.p2.accelerate(acceleration)
-		
-		self.p2.speed *= friction
 
 		if keys[pygame.K_DOWN]:
 			if not self.p2.bullet_is_shot:
@@ -93,11 +144,34 @@ class AstroRockets:
 		if keys[pygame.K_RIGHT]:
 			self.p2.drift_heading += turn_speed
 
+		# PowerUp Shooting for Player 2
+		if keys[pygame.K_RSHIFT] or keys[pygame.K_QUESTION]:
+			
+			if self.powerup_ids[self.p2.current_powerup] == "none":
+				print("No Powerup Collected!")
+
+			elif self.powerup_ids[self.p2.current_powerup] == "scatter_shot":
+				for i in range(scattershot_count):
+					bullet_hdg = ((360 / scattershot_count) * i) + self.p2.drift_heading
+					b = Bullet(self.p2.x, self.p2.y, bullet_hdg, ScatterShot(0, 0).color)
+					b.speed = scattershot_speed
+					self.p2.bullets.append(b)
+			
+			elif self.powerup_ids[self.p2.current_powerup] == "missile":
+				m = Bullet(self.p2.x, self.p2.y, self.p2.drift_heading, Missile(0, 0).color)
+				m.speed = missile_speed
+				self.p2.bullets.append(m)
+				self.p2.accelerate(recoil)
+			
+			self.p2.assign_powerup(0)
+
 		self.p1.update()
+		self.p1.speed *= friction
+		
 		self.p2.update()
+		self.p2.speed *= friction
 
-		despawn_time = 200
-
+		# Update Player 1's Bullets
 		for bullet in self.p1.bullets:
 			bullet.update()
 
@@ -113,14 +187,19 @@ class AstroRockets:
 
 			bullet.update_collider()
 			
+			# Collision between player 2 and player 1's bullets
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p2.x, self.p2.y, self.p2.collider_size):
-				print("RED WINS!!")
-				sleep(3)
-				self.running = False
+				if bullet.color != Missile(0, 0).color:
+					print("RED WINS!!")
+					sleep(3)
+					self.running = False
 
+			# Automatic despawn
 			if bullet.despawn_timer > despawn_time:
-				self.p1.bullets.remove(bullet)
+				if bullet.color != Missile(0, 0).color:
+					self.p1.bullets.remove(bullet)
 				
+		# Update Player 2's Bullets		
 		for bullet in self.p2.bullets:
 			bullet.update()
 
@@ -136,13 +215,17 @@ class AstroRockets:
 
 			bullet.update_collider()
 
+			# Collisions between player 1 and player 2's bullets
 			if self.collision_circle(bullet.x, bullet.y, bullet.radius, self.p1.x, self.p1.y, self.p1.collider_size):
-				print("BLUE WINS!!")
-				sleep(3)
-				self.running = False
+				if bullet.color != Missile(0, 0).color:
+					print("BLUE WINS!!")
+					sleep(3)
+					self.running = False
 
+			# Automatic despawn
 			if bullet.despawn_timer > despawn_time:
-				self.p2.bullets.remove(bullet)
+				if bullet.color != Missile(0, 0).color:
+					self.p2.bullets.remove(bullet)
 
 
 		# Player 1 boundary collisions
@@ -170,7 +253,7 @@ class AstroRockets:
 		self.p1.update_collider()
 		self.p2.update_collider()
 
-		# Handle collisions between rockets and walls
+		# Handle collisions between rockets and walls, and powerups and walls
 		for wall in self.levels[self.current_level]:
 			# Player 1
 			if wall.collider.colliderect(self.p1.wall_collider):
@@ -184,22 +267,87 @@ class AstroRockets:
 				self.p2.y = self.p2.old_y
 				self.p2.speed = 0
 
+			for powerup in self.powerups:
+				if wall.collider.colliderect(powerup.wall_collider):
+					x = randint(5, self.width - 5)
+					y = randint(5, self.height - 5)
+					powerup.x = x
+					powerup.y = y
+
 		# Handle collisions between bullets and walls
 		for wall in self.levels[self.current_level]:
 			# Player 1
 			for bullet in self.p1.bullets:
 				if bullet.wall_collider.colliderect(wall.collider):
+					if bullet.color == Missile(0, 0).color:
+						self.p1.missile_exploded = True
+						self.p1.missile_explosion_x = bullet.x
+						self.p1.missile_explosion_y = bullet.y
+						if self.dist(bullet.x, bullet.y, self.p1.x, self.p1.y) <= self.p1.collider_size + self.p1.missile_explosion_radius:
+							print("BLUE WINS")
+							self.game_over = True
+						
+						if self.dist(bullet.x, bullet.y, self.p2.x, self.p2.y) <= self.p2.collider_size + self.p2.missile_explosion_radius:
+							print("RED WINS")
+							self.game_over = True
+					
 					self.p1.bullets.remove(bullet)
 
 			# Player 2
 			for bullet in self.p2.bullets:
 				if bullet.wall_collider.colliderect(wall.collider):
+					if bullet.color == Missile(0, 0).color:
+						self.p2.missile_exploded = True
+						self.p2.missile_explosion_x = bullet.x
+						self.p2.missile_explosion_y = bullet.y
+						if self.dist(bullet.x, bullet.y, self.p1.x, self.p1.y) <= self.p1.collider_size + self.p1.missile_explosion_radius:
+							print("BLUE WINS")
+							self.game_over = True
+						
+						if self.dist(bullet.x, bullet.y, self.p2.x, self.p2.y) <= self.p2.collider_size + self.p2.missile_explosion_radius:
+							print("RED WINS")
+							self.game_over = True
+					
 					self.p2.bullets.remove(bullet)
+
+		# Handle collisions between rockets and powerups
+		for powerup in self.powerups:
+			# Player 1
+			if self.collision_circle(self.p1.x, self.p1.y, self.p1.collider_size, powerup.x, powerup.y, powerup.radius):
+				self.p1.assign_powerup(powerup.id)
+				self.powerups.remove(powerup)
+
+			# Player 2
+			if self.collision_circle(self.p2.x, self.p2.y, self.p2.collider_size, powerup.x, powerup.y, powerup.radius):
+				self.p2.assign_powerup(powerup.id)
+				self.powerups.remove(powerup)
 
 		self.p1.update_old_coords()
 		self.p2.update_old_coords()
 
+		# Missile Explosion Fade Player 1
+		if self.p1.missile_exploded:
+			self.p1.missile_timer += 1
+
+		if self.p1.missile_timer > missile_fade:
+			self.p1.missile_exploded = False
+			if self.game_over:
+				self.running = False
+
+		# Missile Explosion Fade Player 2
+		if self.p2.missile_exploded:
+			self.p2.missile_timer += 1
+
+		if self.p2.missile_timer > missile_fade:
+			self.p2.missile_exploded = False
+			if self.game_over:
+				self.running = False
+
+		self.powerup_spawn_timer += 1
+
 	def render(self):
+		self.win.fill(self.background)
+
 		self.p1.render(self.win)
 		self.p2.render(self.win)
 
@@ -212,7 +360,44 @@ class AstroRockets:
 		for wall in self.levels[self.current_level]:
 			wall.render(self.win)
 
+		for powerup in self.powerups:
+			powerup.render(self.win)
+
+		if self.p1.missile_exploded:
+			pygame.draw.ellipse(self.win, (255, 255, 255), (self.p1.missile_explosion_x - self.p1.missile_explosion_radius,
+															self.p1.missile_explosion_y - self.p1.missile_explosion_radius,
+															self.p1.missile_explosion_radius * 2,
+															self.p1.missile_explosion_radius * 2
+															))
+		
+		if self.p2.missile_exploded:
+			pygame.draw.ellipse(self.win, (255, 255, 255), (self.p2.missile_explosion_x - self.p2.missile_explosion_radius,
+															self.p2.missile_explosion_y - self.p2.missile_explosion_radius,
+															self.p2.missile_explosion_radius * 2,
+															self.p2.missile_explosion_radius * 2
+															))
+
+		pygame.display.update()
+
 	# Gameplay functions
+
+	# def get_spawn_location(self):
+	# 	"""Finds a suitable random spawn location for a powerup, staying within the
+	# 	boundaries and avoiding all walls.
+		
+	# 	Returns:
+	# 		tuple -- Contains the x and y coordinates for the suitable location
+	# 	"""
+
+	# 	x = randint(5, self.width - 5)
+	# 	y = randint(5, self.height - 5)
+	# 	size = ScatterShot(0, 0).radius
+	# 	rect = pygame.Rect(x - size, y - size, size * 2, size * 2)
+	# 	for wall in self.levels[self.current_level]:
+	# 		if wall.collider.colliderect(rect):
+	# 			self.get_spawn_location()
+
+	# 	return (x, y)
 
 	def dist(self, x1, y1, x2, y2):
 		"""Finds the distance between 2 points on a 2D plane using the Pythagorean Theorem.
@@ -297,9 +482,7 @@ def main():
 				quit()
 
 		game.logic()
-		game.win.fill(game.background)
 		game.render()
-		pygame.display.update()
 
 
 if __name__ == "__main__":

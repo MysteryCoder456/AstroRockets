@@ -25,15 +25,15 @@ To install this game follow these steps:
 Right-click the file `start_win.bat` And click Run as Administator.
 
 **MacOS and Linux**:
-Open the game folder in Terminal and enter `sh start_unix.sh`.
+Open the game folder in Terminal and enter `./start_unix.sh`.
 
 ## How to play
 
 **Player 1:**
-A and D for turning, W for accelerating and S for shooting.
+A and D for turning, W for accelerating and S for shooting. Press E for using a PowerUp (when available).
 
 **Player 2:**
-Left and right arrow keys for turning, up arrow key for accelerating and down arrow key for shooting.
+Left and right arrow keys for turning, up arrow key for accelerating and down arrow key for shooting. Press Right Shift for using a PowerUp (when available).
 
 ## Issues
 
