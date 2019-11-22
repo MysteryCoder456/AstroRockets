@@ -1,4 +1,4 @@
 echo "installing dependencies..."
-pip install pygame
+pip install -r requirements.text
 chmod +x ./start_unix.sh
 ./start_unix.sh
