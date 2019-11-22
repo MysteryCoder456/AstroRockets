@@ -1,3 +1,4 @@
 echo "installing dependencies..."
-pip install pygame
-sh ./start_unix.sh
+pip install -r requirements.txt
+echo "running game..."
+start_unix.bat
